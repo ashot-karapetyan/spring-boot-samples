@@ -1,0 +1,25 @@
+node{
+    stage "Checkout"
+    git 'https://github.com/ashot-karapetyan/spring-boot-samples.git'
+
+    stage "Build"
+    withMaven(jdk: 'JDK_8.112', maven: 'MVN_3.3.9', mavenLocalRepo: '', mavenOpts: '', mavenSettingsFilePath: '') {
+        sh "mvn install -f  spring-boot-basewebapp/pom.xml"
+    }
+
+    parallel (
+        node {
+            stage "Integration Test"
+            sh "sleep 10"
+        },
+
+        node {
+
+            stage "Performance Test"
+            sh "sleep 15"
+        }
+    )
+
+    stage "Bake"
+
+}
